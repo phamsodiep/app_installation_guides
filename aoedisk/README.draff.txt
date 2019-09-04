@@ -8,7 +8,7 @@
 
 ## Install driver
 Need: bin folder & ContosoTest.cer
-1. Enable Test mode for self signing (Enter ContosoTest.cer to install it to ROOT Certificate)
+1. Enable Test mode for self signing (Enter ContosoTest.cer to install it to 'Trusted Publishers' certificate store)
 2. Turn on test mode: bcdedit /set TESTSIGNING ON
 3. Restart for certification effection
 4. Install driver from device manager (SCSCI class)
@@ -25,7 +25,7 @@ Need: bin folder & ContosoTest.cer
 ## Test aoedisk scan && aoedisk mount
 
 ## Make it bootable
-Objective: makesure the drivers are loaded as below order:
+Objective 1: makesure the drivers are loaded as below order:
 . ndis.sys
 . NIC miniport driver (E1G6032E.sys or Rt64Win7.sys)
 . aoedisk64.sys
@@ -33,6 +33,15 @@ Objective: makesure the drivers are loaded as below order:
 . disk.sys
 . CLASSPNP.SYS
 . tcpip.sys
+Objective 2: remove network filter that block AoE packets on Windows 7 while booting (I do NOT know whether or not this cause a security hole, do this with your own's risk)
+. Download https://gallery.technet.microsoft.com/Hyper-V-Network-VSP-Bind-cf937850
+. Install downloaded file
+. Run command to remove filters:
+	nvspbind.exe => to find id of the NIC card
+	nvspbind.exe /d {nic_id} ms_wfplwf   =>   disable WFP Lightweight Filter (which block AoE packets to AoEDisk64.sys driver)
+(Note: For Windows 8, this filter disable is NOT need)
+
+
 1. Optional => enable /sos booting (Windows NT 4.0 style) with msconfig.exe to see driver loading order
 
 2. Regedit && navigate to [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services]
